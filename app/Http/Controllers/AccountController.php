@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
@@ -146,6 +147,10 @@ class AccountController extends Controller
             // crop the best fitting 5:3 (600x360) ratio and resize to 600x360 pixel
             $image->cover(150, 150);
             $image->toPng()->save(public_path('/profile_pic/thumb/'.$imageName));
+
+            //Delete Old Profile Pic
+            File::delete(public_path('/profile_pic/thumb/'.Auth::user()->image));
+            File::delete(public_path('/profile_pic/'.Auth::user()->image));
 
             User::where('id', $id)->update(['image' => $imageName]);
 
